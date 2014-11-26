@@ -25,9 +25,11 @@ boolean LEDintState = LOW;
 
 
 int nota1 = 0x40;
-int nota2 = 0x40;
-int nota3 = 0x40;
-int nota4 = 0x40;
+int nota2 = 0x42;
+int nota3 = 0x44;
+int nota4 = 0x46;
+int flag1 = 1;
+int flag2= 0;
 //instantiate the timer object
 
 void setup(void)
@@ -39,9 +41,9 @@ void setup(void)
     pinMode(LED4, OUTPUT);
     pinMode(LEDint, OUTPUT);
     pinMode(BUTTON_PIN, INPUT);
-    digitalWrite(BUTTON_PIN, HIGH);
+    
     t.every(500,changeState);
-    attachInterrupt(0, somethingIsHappening, RISING);
+    attachInterrupt(0, cambiarNota, RISING);
 }
 
 void loop(void)
@@ -50,24 +52,61 @@ void loop(void)
     
     if(actualState==1)
     {
+      
       digitalWrite(LED4, LOW);
       digitalWrite(LED1, HIGH);
+      while (flag1>0)
+      {
+        noteOn(0x90, nota4, 0x00);
+        noteOn(0x90, nota1, 0x50);
+        flag1--;
+        flag2++;
+      }
+      
+      
     }
     else if (actualState==2)
     {
+      
       digitalWrite(LED1, LOW);
       digitalWrite(LED2, HIGH);
+      while(flag2>0){
+        noteOn(0x90, nota1, 0x00);
+        noteOn(0x90, nota2, 0x50);
+        flag2--;
+        flag1++;
+      }
+      
     }
     else if(actualState==3)
     {
+      
       digitalWrite(LED2, LOW);
       digitalWrite(LED3, HIGH);
+      
+      while (flag1>0)
+      {
+        noteOn(0x90, nota2, 0x00);
+        noteOn(0x90, nota3, 0x50);
+        flag1--;
+        flag2++;
+      }
+      
     }
     else if (actualState==4)
     {
+      
       digitalWrite(LED3, LOW);
       digitalWrite(LED4, HIGH);
+      while(flag2>0){
+        noteOn(0x90, nota3, 0x00);
+        noteOn(0x90, nota4, 0x50);
+        flag2--;
+        flag1++;
+      }
+           
     }
+    
       
     
 }
@@ -83,10 +122,28 @@ void changeState()
     actualState = 1;
   }
 }
-void somethingIsHappening()
+void cambiarNota()
 {
   LEDintState = !LEDintState;
   digitalWrite(LEDint, LEDintState);
+   switch (actualState) {
+    case 1:
+      //si estamos en el estado 1, cambiamos la variable nota1
+      nota1 += 2;
+      break;
+    case 2:
+      //si estamos en el estado 1, cambiamos la variable nota1
+      nota2 += 2;
+      break;
+    case 3:
+      //si estamos en el estado 1, cambiamos la variable nota1
+      nota3 += 2;
+      break;
+    case 4:
+      //si estamos en el estado 1, cambiamos la variable nota1
+      nota4 += 2;
+      break;
+  }
  
   
 }
